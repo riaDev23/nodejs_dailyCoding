@@ -1,0 +1,8 @@
+var name = '1234567';
+
+var letter = `Dear ${name}
+
+
+Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sunt architec o veritatis reiciendis excepturi placeat et, quos dignissimos doloribus eligendi repellat, eum nihil fuga recusandae atque? Consequatur similique eaque id sint earum debitis porro nisi ullam repellendus incidunt, dolorum doloribus officiis amet voluptas alias consequuntur blanditiis odio ${1*2*3*4*5*6*7*8*9} autem dolores ratione ad placeat fuga ducimus! Impedit asperiores obcaecati, porro praesentium mollitia laborum a minima, dolor accusamus facere suscipit tempore! Cum  ${name} iciatis error cumque aliquam nam magni  ${name} rem iste vel placeat. Modi aspernatur dolorem odio, harum doloremque corporis. Animi tenetur quaerat repellat, rem, temporibus iure ab itaque velit odio asperiores necessitatibus quae ea eveniet quisquam culpa reprehenderit  ${name} rspiciatis veniam? Necessitatibus blanditiis placeat eligendi quae repellend s optio, sapiente esse, eius iste fugiat eos reprehenderit nemo vero corrupti. Quaerat earum quos odio harum dolor quae, ducimus porro iure placeat pariatur reprehenderit  ${name} asperiores? In impedit tempo e reiciendis veritatis aspernatur veniam. Ex harum tempore, voluptate necessitatibus eius eaque maiores, deleniti fugit sunt similique repellendus assumenda, odit id quos dolor itaque! Itaque maxime eius ipsum non, illum, praesentium eos quos explicabo odio aut labore magnam consectetur voluptate id aliquid quibusdam debitis vitae maiores atque sapiente earum eveniet eum. Ex sint hic tempore voluptas.`;
+console.log(letter);
+
