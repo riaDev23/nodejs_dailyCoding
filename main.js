@@ -19,6 +19,7 @@ var app = http.createServer(function (request, response) {
   }
   response.writeHead(200);
   fs.readFile(`data/${title}`, "utf8", function (err, description) {
+    console.log(title);
     var template = `
     <!doctype html>
     <html>
