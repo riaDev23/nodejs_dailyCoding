@@ -2,43 +2,7 @@ var http = require("http");
 var fs = require("fs");
 var url = require("url");
 var qs = require('querystring');
-
-function templateHTML(title, list, body, post) {
-  return `
-  <!doctype html>
-  <html>
-  <head>
-    <title>WEB - ${title}</title>
-    <meta charset="utf-8">
-  </head>
-  <body>
-    <h1><a href="/">WEB</a></h1>
-    ${list}
-    ${post}
-    ${body}
-  </body>
-  </html>
-  `;
-}
-
-function templateList(filelist) {
-  var list = "<ul>";
-  var i = 0;
-  while (i < filelist.length) {
-    if (filelist[i].includes("WELCOME")) {
-      i += 1;
-      continue;
-    }
-    list += `
-    <li>
-      <a href="/?id=${filelist[i]}">${filelist[i]}</a>
-    </li>`;
-    i += 1;
-  }
-  list += "</ul>";
-
-  return list;
-}
+var template = require('./lib/template.js')
 
 var app = http.createServer(function (request, response) {
   var _url = request.url;
@@ -61,22 +25,22 @@ var app = http.createServer(function (request, response) {
     }
     fs.readdir("./data", function (err, filelist) {
       fs.readFile(`data/${title}`, "utf8", function (err, description) {
-        var list = templateList(filelist);
-        var template = templateHTML(
+        var list = template.list(filelist);
+        var html = template.html(
           title,
           list,
           `<h2>${title}</h2>${description}`,
           post
         );
         response.writeHead(200);
-        response.end(template);
+        response.end(html);
       });
     });
   } else if (pathname === "/update") {
     fs.readdir("./data", function (err, filelist) {
       fs.readFile(`data/${title}`, "utf8", function (err, description) {
-        var list = templateList(filelist);
-        var template = templateHTML(
+        var list = template.list(filelist);
+        var html = template.html(
           title,
           list,
           `
@@ -98,7 +62,7 @@ var app = http.createServer(function (request, response) {
         `<h4>${title} - 글수정</h4>`
         );
         response.writeHead(200);
-        response.end(template);
+        response.end(html);
       });
     });
   } else if (pathname === "/update_process") {
@@ -140,8 +104,8 @@ var app = http.createServer(function (request, response) {
   } else if (pathname === "/create") {
     fs.readdir("./data", function (err, filelist) {
       var title = "WEB - Create";
-      var list = templateList(filelist);
-      var template = templateHTML(
+      var list = template.list(filelist);
+      var html = template.html(
         title,
         list,
         `
@@ -160,7 +124,7 @@ var app = http.createServer(function (request, response) {
         `<h4>글쓰기</h4>`
       );
       response.writeHead(200);
-      response.end(template);
+      response.end(html);
     });
   } else if (pathname === "/create_process") {
     var body = '';
