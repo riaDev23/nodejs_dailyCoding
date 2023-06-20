@@ -1,8 +1,12 @@
+console.log('hello no daemon');
+
 var http = require("http");
 var fs = require("fs");
 var url = require("url");
 var qs = require('querystring');
 var template = require('./lib/template.js')
+var path = require('path');
+var sanitizeHtml = require('sanitize-html');
 
 var app = http.createServer(function (request, response) {
   var _url = request.url;
@@ -24,12 +28,15 @@ var app = http.createServer(function (request, response) {
       `;
     }
     fs.readdir("./data", function (err, filelist) {
-      fs.readFile(`data/${title}`, "utf8", function (err, description) {
+      var filterdId = path.parse(title).base;
+      fs.readFile(`data/${filterdId}`, "utf8", function (err, description) {
+        var sanitizeTitle = sanitizeHtml(title);
+        var sanitizeDescription = sanitizeHtml(description);
         var list = template.list(filelist);
         var html = template.html(
-          title,
+          sanitizeTitle,
           list,
-          `<h2>${title}</h2>${description}`,
+          `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
           post
         );
         response.writeHead(200);
@@ -38,7 +45,8 @@ var app = http.createServer(function (request, response) {
     });
   } else if (pathname === "/update") {
     fs.readdir("./data", function (err, filelist) {
-      fs.readFile(`data/${title}`, "utf8", function (err, description) {
+      var filterdId = path.parse(title).base;
+      fs.readFile(`data/${filterdId}`, "utf8", function (err, description) {
         var list = template.list(filelist);
         var html = template.html(
           title,
@@ -136,9 +144,10 @@ var app = http.createServer(function (request, response) {
       var post = qs.parse(body);
       var title = post.title;
       var description = post.description;
-      fs.writeFile(`data/${title}`, description, 'utf8', (err) => {
+      var filterdId = path.parse(title).base;
+      fs.writeFile(`data/${filterdId}`, description, 'utf8', (err) => {
         if (err) throw err;
-        response.writeHead(302, {Location: `/?id=${title}`});
+        response.writeHead(302, {Location: `/?id=${filterdId}`});
         response.end();
         console.log('The file has been saved!')
       })
