@@ -46,7 +46,7 @@ var app = http.createServer(function (request, response) {
   } else if (pathname === "/update") {
     fs.readdir("./data", function (err, filelist) {
       var filterdId = path.parse(title).base;
-      fs.readFile(`data/${filterdId}`, "utf8", function (err, description) {
+      fs.readFile(`data/${filterdId}`, "utf8", function (err, de scription) {
         var list = template.list(filelist);
         var html = template.html(
           title,
