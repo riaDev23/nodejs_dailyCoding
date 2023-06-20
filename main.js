@@ -50,9 +50,16 @@ var app = http.createServer(function (request, response) {
       var title = "WELCOME !";
       var post = `<a href="/create">create</a>`;
     } else {
-      var post = `<a href="/create">create</a> <a href="/update">update</a>`;
+      var post = `
+      <a href="/create">create</a>
+      <a href="/update?id=${title}">update</a>
+      <form action="delete_process" method="post">
+        <input type="hidden" name="id" value="${title}">
+        <input type="submit" value="delete">
+      </form>
+      `;
     }
-    fs.readdir("./data", function (errir, filelist) {
+    fs.readdir("./data", function (err, filelist) {
       fs.readFile(`data/${title}`, "utf8", function (err, description) {
         var list = templateList(filelist);
         var template = templateHTML(
@@ -65,15 +72,80 @@ var app = http.createServer(function (request, response) {
         response.end(template);
       });
     });
+  } else if (pathname === "/update") {
+    fs.readdir("./data", function (err, filelist) {
+      fs.readFile(`data/${title}`, "utf8", function (err, description) {
+        var list = templateList(filelist);
+        var template = templateHTML(
+          title,
+          list,
+          `
+          <form action="/update_process" method="post">
+            <p>
+              <input type="hidden" name="id" value="${title}">
+              <input type="text" name="title" placeholder="title" value="${title}">
+            </p>
+            
+            <p>
+              <textarea name="description" cols="25" rows="5" placeholder="내용을 입력하세요" style="resize:none;">${description}</textarea>
+            </p>
+            
+            <p>
+              <input type="submit">
+            </p>
+          </form>
+        `,
+        `<h4>${title} - 글수정</h4>`
+        );
+        response.writeHead(200);
+        response.end(template);
+      });
+    });
+  } else if (pathname === "/update_process") {
+    var body = '';
+    request.on('data', function(data){
+      body += data;
+      
+    });
+    request.on('end', function(){
+      var post = qs.parse(body);
+      var id = post.id;
+      var title = post.title;
+      var description = post.description;
+      fs.rename(`data/${id}`, `data/${title}`, function(err){
+        fs.writeFile(`data/${title}`, description, 'utf8', (err) => {
+          if (err) throw err;
+          response.writeHead(302, {Location: `/?id=${title}`});
+          response.end();
+          console.log('The file has been saved!')
+        })
+      });
+    });
+  } else if (pathname === "/delete_process") {
+    var body = '';
+    request.on('data', function(data){
+      body += data;
+      
+    });
+    request.on('end', function(){
+      var post = qs.parse(body);
+      var id = post.id;
+      fs.unlink(`data/${id}`, (err) => {
+        if (err) throw err;
+        response.writeHead(302, {Location: `/`});
+        response.end();
+        console.log(`data/${id} was deleted`)
+      });
+    });
   } else if (pathname === "/create") {
-    fs.readdir("./data", function (errir, filelist) {
+    fs.readdir("./data", function (err, filelist) {
       var title = "WEB - Create";
       var list = templateList(filelist);
       var template = templateHTML(
         title,
         list,
         `
-          <form action="http://localhost:3000/create_process" method="post">
+          <form action="/create_process" method="post">
             <p><input type="text" name="title" placeholder="title"></p>
             
             <p>
